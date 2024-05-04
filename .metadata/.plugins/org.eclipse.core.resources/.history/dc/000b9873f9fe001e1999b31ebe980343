@@ -1,0 +1,39 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+
+import com.app.pojos.User;
+import com.app.utils.DbUtils;
+
+public class UserDao implements AutoCloseable {
+	private Connection connection;
+
+	public UserDao() throws SQLException {
+		this.connection = DbUtils.getConnection();
+	}
+	
+	public int insertUsers(User s) throws SQLException {
+		int i = 0;
+		String sql = "INSERT INTO users(Full_Name,email,password,phone_number,created_time) VALUES(?,?,?,?,?);";
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setString(1, s.getFullName());
+			stmt.setString(2, s.getEmail());
+			stmt.setString(3, s.getPassword());
+			stmt.setString(4, s.getPhoneNumber());
+			stmt.setString(5, new SimpleDateFormat("dd/MM/yyyy").format(s.getCreated_time()));
+		 i = stmt.executeUpdate();
+		}
+		return i;
+	}
+	@Override
+	public void close() throws Exception {
+		connection.close();
+	}
+	
+
+	
+}

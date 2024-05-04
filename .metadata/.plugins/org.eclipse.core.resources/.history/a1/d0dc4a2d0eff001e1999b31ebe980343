@@ -1,0 +1,138 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import com.app.pojos.Blogs;
+import com.app.pojos.User;
+import com.app.utils.DbUtils;
+
+public class BlogDao {
+
+	private Connection connection;
+	private String query;
+
+	public BlogDao() throws SQLException {
+
+		this.connection = DbUtils.getConnection();
+	}
+	
+	//3. create Blogs
+	public int addBlogs(Blogs b) {
+		query ="INSERT INTO blogs(title,contents,create_time,user_id,category_id) VALUES(?,?,?,?,?);";
+		int i=0;
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, b.getTitle());
+			stmt.setString(2, b.getContents());
+			stmt.setTimestamp(3, new Timestamp(b.getCreated_date().getTime()));
+			stmt.setString(4, b.getUser_id());
+			stmt.setTimestamp(5, b.getCategoryid());
+		 i = stmt.executeUpdate();
+		}
+		return i;
+	}
+	}
+	
+	//// 6.delete blogs.
+
+	public boolean deleteBlogs(int id, User user) throws SQLException {
+		query = "select * from blogs where id = ?";
+		String query1 = "delete from blogs where id =?";
+		boolean flag = false;
+
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				// int id, String title, String contents, Date created_date, int user_id, int
+				// categoryid
+				Blogs s = new Blogs(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4), rs.getInt(5),
+						rs.getInt(6));
+
+				if (user.getUserId() == s.getId()) {
+					try (PreparedStatement stmt1 = connection.prepareStatement(query1)) {
+						stmt1.setInt(1, id);
+						int rs1 = stmt.executeUpdate();
+						if (rs1 > 0)
+							flag = true;
+					}
+				}
+			}
+		}
+		return flag;
+	}
+
+	// 7.read blog contents.//5.show my blogs//4.all blogs
+	public List<Blogs> readBlog() throws SQLException {
+
+		query = "select * from blogs";
+		List<Blogs> list = new ArrayList<>();
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Blogs s = new Blogs(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4), rs.getInt(5),
+						rs.getInt(6));
+				list.add(s);
+			}
+		}
+		return list;
+	}
+	
+	//8.edit blogs
+	
+	public boolean editsBlogs(int id, User user , Scanner sc) throws SQLException {
+		query = "select * from blogs where id = ?";
+		String query1 = "update blogs set contents = ? where id =?";
+		boolean flag = false;
+		sc.nextLine();
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, id);
+			System.out.println("found records for editions....");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Blogs s = new Blogs(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4), rs.getInt(5),
+						rs.getInt(6));
+
+				if (user.getUserId() == s.getId()) {
+					System.out.println("Writes new contents in blogs ::");
+					String newContents = sc.nextLine();
+					try (PreparedStatement stmt1 = connection.prepareStatement(query1)) {
+						stmt1.setString(id, newContents);
+						stmt1.setInt(2, id);
+						int rs1 = stmt.executeUpdate();
+						if (rs1 > 0)
+							flag = true;
+					}
+				}
+			}
+		}
+		return flag;
+	}
+	
+	//9.serching blogs
+	public void serchBlogs(String title, User user) throws SQLException {
+		query = "select * from blogs where userid = ?";
+		
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, user.getUserId());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Blogs s = new Blogs(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4), rs.getInt(5),
+						rs.getInt(6));
+				
+				if (s.getContents().indexOf(title)!=-1) {
+					System.out.println("Blogs id-"+s.getId()+" -"+s.getTitle());
+					}
+				}
+			}
+		}
+	
+
+}

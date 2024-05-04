@@ -1,0 +1,14 @@
+package com.app.pojos;
+
+import java.util.Date;
+
+public class User {
+	private int userId;
+	private String fullName;
+	private String email;
+	private String password;
+	private String phoneNumber;
+	private Date created_time;
+	
+	
+}

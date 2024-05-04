@@ -1,0 +1,34 @@
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    Full_Name VARCHAR(50),
+    email VARCHAR(50) UNIQUE,
+    password VARCHAR(50),
+    phone_number VARCHAR(50) UNIQUE,
+    created_time TIMESTAMP
+);
+
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(30),
+    description VARCHAR(50)
+);
+
+CREATE TABLE blogs (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(20),
+    contents VARCHAR(30),
+    created_time TIMESTAMP,
+    user_id INT,
+    category_id INT,
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_category_id FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+
+INSERT INTO blogs(title,contents,create_time,user_id,category_id) VALUES(?,?,?,?,?);
+
+insert into categories(title,description) values(?,?);
+
+
+INSERT INTO users(Full_Name,email,password,phone_number,created_time) VALUES('Martin','9995889595', 'matin@gmail.com','Abc1234','pune');
+

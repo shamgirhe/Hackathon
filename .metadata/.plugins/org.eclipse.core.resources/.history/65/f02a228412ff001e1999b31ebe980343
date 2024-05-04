@@ -1,0 +1,47 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.app.pojos.Blogs;
+import com.app.pojos.Categories;
+import com.app.utils.DbUtils;
+
+public class CategoryDao {
+
+	private Connection connection;
+	private String query;
+	public CategoryDao() throws SQLException {
+		this.connection = DbUtils.getConnection();
+	}
+	
+	//1. Add Category
+	public int addCategory(Categories b) throws SQLException {
+		query ="insert into categories(title,description) values(?,?);";
+		int i=0;
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, b.getTitle());
+			stmt.setString(2, b.getDescriptions());
+		 i = stmt.executeUpdate();
+		}
+		return i;
+	}
+	//2.show category
+	public List<Categories> showCategories() throws SQLException {
+		query = "select * from categories";
+		List<Categories> list = new ArrayList<>();
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				 Categories s = new Categories(rs.getString(1), rs.getString(2));
+				list.add(s);
+			}
+		}
+		return list;
+	}
+}

@@ -1,0 +1,22 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.app.utils.DbUtils;
+
+public class BlogDao {
+
+	private Connection connection;
+	private String query;
+	
+	public BlogDao() {
+		this.connection = DbUtils.getConnection();	
+	}
+	////6.delete blogs.
+		
+		public void deleteBlogs(int id) {
+			
+		}
+	}
+}

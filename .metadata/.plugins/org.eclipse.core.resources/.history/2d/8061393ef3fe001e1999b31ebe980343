@@ -1,0 +1,18 @@
+package com.app.pojos;
+import java.util.Date;
+
+public class abc {
+
+	  public static void main(String[] args) {
+	    System.out.println("Hello world!");
+	            // Create a java.util.Date object
+	            java.util.Date utilDate = new java.util.Date();
+	            System.out.println(utilDate);
+	            // Convert java.util.Date to java.sql.Date
+	            java.sql.Date sqlDate = new java.sql.Date(utilDate);
+
+	            // Print the converted java.sql.Date
+	            System.out.println("Converted java.sql.Date: " + sqlDate);
+	        }
+	    }
+

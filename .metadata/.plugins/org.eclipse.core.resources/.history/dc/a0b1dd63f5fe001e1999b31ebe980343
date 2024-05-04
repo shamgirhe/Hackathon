@@ -1,0 +1,12 @@
+package com.app.pojos;
+
+import java.sql.Date;
+
+public class blogs {
+	private int id;
+	private String title; 
+	private String contents;
+	private Date created_date;
+	private int user_id;
+	private int categoryid;
+}

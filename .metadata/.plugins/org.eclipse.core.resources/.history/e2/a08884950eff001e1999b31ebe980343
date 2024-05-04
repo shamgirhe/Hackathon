@@ -1,0 +1,31 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import com.app.pojos.Blogs;
+import com.app.pojos.Categories;
+import com.app.utils.DbUtils;
+
+public class CategoryDao {
+
+	private Connection connection;
+	private String query;
+	public CategoryDao() throws SQLException {
+		this.connection = DbUtils.getConnection();
+	}
+	
+	//1. Add Category
+	public int addCategory(Categories b) throws SQLException {
+		query ="insert into categories(title,description) values(?,?);";
+		int i=0;
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, b.getTitle());
+			stmt.setString(2, b.getDescriptions());
+		 i = stmt.executeUpdate();
+		}
+		return i;
+	}
+}

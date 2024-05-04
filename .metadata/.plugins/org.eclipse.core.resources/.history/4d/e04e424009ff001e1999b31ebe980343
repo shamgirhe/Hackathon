@@ -1,0 +1,40 @@
+package com.app.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.app.pojos.Blogs;
+import com.app.pojos.User;
+import com.app.utils.DbUtils;
+
+public class BlogDao {
+
+	private Connection connection;
+	private String query;
+	
+	public BlogDao() throws SQLException {
+		
+		this.connection = DbUtils.getConnection();	
+	}
+	////6.delete blogs.
+		
+		public boolean deleteBlogs(int id) {
+			query = "select * from blogs where id = ?";
+			try (PreparedStatement stmt = connection.prepareStatement(query)) {
+				stmt.setInt(1, id);
+			    ResultSet rs = stmt.executeQuery();
+			    while(rs.next()) {
+			    	//int id, String title, String contents, Date created_date, int user_id, int categoryid
+			   Blogs s = new Blogs(rs.getInt(1), rs.getString(2), rs.getString(3),rs.getTimestamp(4), rs.getInt(5), rs.getInt(6));
+					   
+			    }
+			}		
+			return list;
+		}
+	}
+

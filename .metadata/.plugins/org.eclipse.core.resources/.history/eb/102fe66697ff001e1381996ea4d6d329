@@ -1,0 +1,221 @@
+package com.app.tester;
+
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Scanner;
+
+import com.app.dao.BlogDao;
+import com.app.dao.CategoryDao;
+import com.app.dao.UserDao;
+import com.app.pojos.Blogs;
+import com.app.pojos.Categories;
+import com.app.pojos.User;
+
+public class UserTester {
+	public static void main(String[] args) {
+		UserDao ud = null;
+		Scanner sc = new Scanner(System.in);
+		boolean flag = true;
+		try {
+			ud = new UserDao();
+			while (flag) {
+				menu1();
+				switch (sc.nextInt()) {
+				case 0:
+					System.out.println("*-*-*-*-*-*-*-*-*-*-");
+					System.out.println("Thanks you.");
+					System.out.println("*-*-*-*-*-*-*-*-*-*-");
+					flag = false;
+					break;
+				case 1: {
+					sc.nextLine();
+					System.out.print("Enter your email ::");
+					String email = sc.nextLine();
+					System.out.print("Enter your Passwords ::");
+					String password = sc.nextLine();
+					User user = ud.login(email, password);
+					if (user != null)
+					System.out.println("#### Login is Successful - "+user.getUserId()+" "+user.getFullName()+" #####");
+					if (user != null) {
+						boolean flag1 = true;
+						CategoryDao cd = new CategoryDao();
+						BlogDao bd = new BlogDao();
+						while (flag1) {
+							menu2();
+							System.out.println("*-*-*-*-*-*-*-*");
+								System.out.println("*#* Login user Name is " +user.getFullName()+" *#*");
+								System.out.println("Enter your Choice ::");
+								switch (sc.nextInt()) {
+							case 0: {
+								sc.nextLine();
+								System.out.println("*-*-*-*-*-*-*-*-*-*-");
+								System.out.println("Thanks you.");
+								System.out.println("*-*-*-*-*-*-*-*-*-*-");
+								flag1 = false;
+							}
+								break;
+							case 1: {
+								System.out.println("--------------------------------------------------------------------------------------------");
+								System.out.printf("%5s%20s%30s\n","id","Title","Descreption");
+								System.out.println("--------------------------------------------------------------------------------------------");
+								cd.showCategories().forEach(s -> System.out.printf("%5s%20s%30s\n",s.getId(),s.getTitle(),s.getDescriptions()));
+								System.out.println("--------------------------------------------------------------------------------------------");
+							}
+								break;
+							case 2: {
+								sc.nextLine();
+								System.out.print("Enter the Title for Category ::");
+								String title = sc.nextLine();
+								System.out.print("Enter the description for Category ::");
+								String desc = sc.nextLine();
+								int i = cd.addCategory(new Categories(title, desc));
+								if(i>0)
+								 System.out.println("*** Category is added. ****");
+							}
+								break;
+							case 3: {
+								sc.nextLine();
+								System.out.println("Enter the title ::");
+								String title = sc.nextLine();
+								System.out.println("Enter the Contents ::");
+								String contents = sc.nextLine();
+								System.out.println("--------------------------------------------------------------------------------------------");
+								System.out.printf("%5s%20s%30s\n","id","Title","Descreption");
+								System.out.println("--------------------------------------------------------------------------------------------");
+								cd.showCategories().forEach(s -> System.out.printf("%5s%20s%30s\n",s.getId(),s.getTitle(),s.getDescriptions()));
+								System.out.println("--------------------------------------------------------------------------------------------");
+								System.out.println("Enter the Category id :: ");
+								int id = sc.nextInt();
+								int i = bd.addBlogs(new Blogs(title, contents, new Date(), user.getUserId(), id));
+								if (i > 0)
+									System.out.println("Blogs is Added SuccessFully!!");
+								else
+									System.out.println("Not Added!!");
+							}
+								break;
+							case 4: {
+								System.out.println("All Blogs are ::");
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+								System.out.printf("%-5s%-30s%-40s%-40s%-20s%-20s\n", "ID", "Title", "Description", "Time", "Category ID", "Category Title");
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+								bd.AllBlog().forEach(s -> System.out.printf("%-5s%-30s%-40s%-40s%-20s%-20s\n",s.getId(),s.getTitle(),s.getCategoryid(),s.getContents(),s.getUser_id(),s.getCreated_date()));
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+								
+							}
+								break;
+							case 5: {
+								System.out.println("My Blogs are ::");
+								System.out.println("----------------------------------------------------------------------------------------");
+								System.out.println("id     Title         Category Id         contents         User Id         Time");
+								System.out.println("----------------------------------------------------------------------------------------");
+								bd.AllBlog().stream().filter(s -> s.getUser_id() == user.getUserId()).forEach(s -> System.out.println(s.getId()+"        "+s.getTitle()+"       "+s.getCategoryid()+"       "+s.getContents()+"        "+s.getUser_id()+"         ["+s.getCreated_date()+"]"));
+								System.out.println("------------------------------------------------------------------------------------------");
+							}
+								break;
+							case 6: {
+								sc.nextLine();
+								System.out.print("Enter the Blog_id to be deleted ::");
+								int id = sc.nextInt();
+								int c = bd.deleteBlogs(id, user.getUserId());
+								if (c > 0)
+									System.out.println("delete the blog is successfully.");
+								else
+									System.out.println("your not authorised User.");
+							}
+								break;
+							case 7: {
+								sc.nextLine();
+								System.out.println("Enter the Blog_id to be read ::");
+								int id = sc.nextInt();
+								System.out.println("Fill content as are followed::");
+								System.out.println("-------------------------------------------------------------------");
+								bd.AllBlog().stream().filter(s -> s.getId() == id).forEach(s -> System.out
+										.println("Blog Title: " + s.getTitle() + "\r\nBlog Content:" + s.getContents()));
+								System.out.println("-------------------------------------------------------------------");
+		
+							}
+								break;
+							case 8: {
+								// edit blogs
+								sc.nextLine();
+								System.out.print("Enter the Blog id to be Edited :: ");
+								int id = sc.nextInt();
+								boolean f = bd.editsBlogs(id, user, sc);
+								if (f)
+									System.out.println("Updated Data SuccessFully Done....");
+								else
+									System.out.println("updation is not done.");
+							}
+								break;
+							case 9: {
+								sc.nextLine();
+								System.out.print("Enter the words :: ");
+								String word = sc.nextLine();
+								System.out.println();
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+								System.out.printf("%-5s%-30s%-40s%-40s%-20s%-20s\n", "ID", "Title", "Description", "Time", "Category ID", "Category Title");
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+								bd.AllBlog().stream().filter(s -> ((s.getContents().indexOf(word)!=-1)||(s.getTitle().indexOf(word)!=-1))).forEach(s -> System.out.printf("%-5s%-30s%-40s%-40s%-20s%-20s\n",s.getId(),s.getTitle(),s.getCategoryid(),s.getContents(),s.getUser_id(),s.getCreated_date()));
+								System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
+							}
+								break;
+
+							default:
+								break;
+							}
+						}
+					} else
+						System.out.println("User Credential are wrongs!!!!");
+
+				}
+					break;
+				case 2: {
+					sc.nextLine();
+					System.out.print("Enter Your Full Name ::");
+					String fullName = sc.nextLine();
+					System.out.print("Enter Your Email ::");
+					String email = sc.nextLine();
+					System.out.print("Enter Your Password ::");
+					String password = sc.nextLine();
+					System.out.print("Enter Your Mobile Number ::");
+					String phoneNumber = sc.nextLine();
+	
+					int i = ud.insertUsers(new User(fullName, email, password, phoneNumber, new Date()));
+					if (i > 0)
+						System.out.println("**********Register is done***************");
+				}
+					break;
+				case 3: {
+					    System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
+					    System.out.printf("%5s%25s%25s%30s%30s\n", "id", "full name", "email", "phone no", " created time");
+					    System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------");
+					    ud.allUsers().forEach(s -> System.out.printf("%5s%25s%30s%25s%30s\n",s.getUserId(),s.getFullName(),s.getEmail(),s.getPhoneNumber(),s.getCreated_time()));
+					    System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------");
+				}
+					break;
+				default:
+					System.out.println("Invalid Choice ::");
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void menu1() {
+		System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+		System.out.println("0.Exits\r\n1.Login\r\n2.Register.\r\n3.All Users.");
+		System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+		System.out.println("Enter your choice::");
+
+	}
+
+	private static void menu2() {
+		System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+		System.out.println(
+				" 0.LogOut\r\n 1.show category\r\n 2.add category.\r\n 3.create blog.\r\n 4.display all blogs.\r\n 5.show my blogs.\r\n 6.delete blogs.\r\n 7.read blog contents.\r\n 8.edit blogs\r\n 9.search blog");
+		System.out.println("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
+	}
+}

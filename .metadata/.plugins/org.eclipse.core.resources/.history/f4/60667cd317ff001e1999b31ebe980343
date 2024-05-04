@@ -1,0 +1,29 @@
+package com.app.pojos;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class abc {
+
+	  public static void main(String[] args) {
+	    System.out.println("Hello world!");
+	            // Create a java.util.Date object
+	   // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	    /*SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        
+        try {
+             Parsing the date string into a Date object
+            Date date = dateFormat.parse(dateString);
+            
+            // Displaying the parsed date in the desired format
+            System.out.println("Parsed Date: " + dateFormat.format(date));*/
+	            java.util.Date utilDate = new java.util.Date();
+	            System.out.println(utilDate);
+	            // Convert java.util.Date to java.sql.Date
+	           java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+	           Timestamp timestamp = new Timestamp(utilDate.getTime());
+	            // Print the converted java.sql.Date
+	            System.out.println("Converted java.sql.Date: " + sqlDate+" "+timestamp);
+	        }
+	    }
+
